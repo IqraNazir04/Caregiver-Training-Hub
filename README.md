@@ -18,9 +18,24 @@ Bite-sized microlearning + AI chat support for home health aides and family care
 - **Auth**: email/password signup and login with JWT sessions.
 - **Public marketing pages**: Home, About, Features, Courses, FAQ — plus an authenticated app shell (Tracks, Certification, Chat, Profile).
 
-## Roadmap (not yet built)
+## Roadmap
 
-Daily care checklist generator, medication OCR/interaction assistant, full 3-tier symptom triage, voice-first mode, burnout/respite check-ins, family care coordination board, pre-appointment prep tool. (See the Features page for status of each.)
+Two of the original eight planned features are live; the rest are scoped but not yet built. Status badges on the in-app Features page mirror this table.
+
+| Feature | Status | What it will do |
+|---|---|---|
+| Condition-specific learning tracks | ✅ Live | 22 short lesson + quiz tracks across 5 themes (see above) |
+| AI chat grounded in real guidance | ✅ Live | Track-scoped or general chat, cited answers, medical disclaimer, emergency-keyword flagging — powered by Claude Sonnet 5 |
+| Certification | ✅ Live | Printable certificate once every lesson in a track is completed, with real completion date |
+| Daily care checklist generator | 🔜 Planned | Enter a patient's conditions and medications to get a personalized daily routine — medication timing, vitals to watch, condition-specific red-flag symptoms |
+| Medication interaction & schedule assistant | 🔜 Planned | Photo-scan prescription bottles to build a medication schedule, flag dangerous interactions or duplicate therapies, and get reminders |
+| Symptom triage with escalation tiers | 🔜 Planned | Three-tier guidance — monitor, call the doctor within 24-48h, or seek emergency care now — mirroring clinical triage protocols |
+| Voice-first mode | 🔜 Planned | Hands-free chat for when you're mid-task (changing a bandage, holding a patient) — ask out loud instead of typing |
+| Burnout & respite support | 🔜 Planned | Short weekly caregiver stress check-in, surfacing local respite care resources and support groups |
+| Family care coordination board | 🔜 Planned | Shared log for families splitting caregiving duties — medication given, doctor's notes, upcoming appointments — visible to everyone involved |
+| Appointment prep tool | 🔜 Planned | Describe recent changes or concerns and get help drafting questions for the doctor ahead of a rushed visit |
+
+Also on the radar, not yet scoped in detail: a real 3-tier emergency triage classifier (today's escalation logging is a lightweight keyword heuristic, not clinical triage), multi-language lesson content, and richer analytics on quiz performance per track.
 
 ## Tech stack
 
