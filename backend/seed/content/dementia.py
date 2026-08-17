@@ -7,6 +7,7 @@ properly licensed source text before any real-world use.
 
 TRACK = {
     "slug": "dementia-alzheimers-care",
+    "theme": "foundational",
     "name": "Dementia & Alzheimer's Care",
     "description": "Practical guidance for caregivers supporting someone with dementia or Alzheimer's disease, including communication strategies and safety at home.",
     "lessons": [

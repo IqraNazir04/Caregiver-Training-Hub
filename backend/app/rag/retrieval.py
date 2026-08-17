@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.rag.chroma_client import get_collection
-from app.rag.openai_client import embed_texts
+from app.rag.ai_clients import embed_texts
 
 
 def retrieve(query: str, track_id: Optional[int], k: int = 4) -> list:

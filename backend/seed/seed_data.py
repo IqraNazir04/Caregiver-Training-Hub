@@ -6,9 +6,60 @@ Run with: python -m seed.seed_data
 from app.database import Base, SessionLocal, engine
 from app.models import Lesson, QuizQuestion, SourceDocument, Track
 from app.rag.ingest import ingest_source_document
-from seed.content import dementia, diabetes, post_stroke
+from seed.content import (
+    basic_first_aid,
+    boundaries_with_family,
+    building_support_network,
+    caregiver_roles,
+    communicating_cognitive_decline,
+    coordinating_family_care,
+    daily_routine,
+    deescalating_agitation,
+    dementia,
+    diabetes,
+    end_of_life_planning,
+    legal_financial_basics,
+    managing_guilt_grief,
+    medication_management,
+    mobility_fall_prevention,
+    nutrition_meal_planning,
+    planning_respite_care,
+    post_stroke,
+    realistic_self_care,
+    recognizing_burnout,
+    talking_to_doctors,
+    warning_signs,
+)
 
-ALL_TRACKS = [dementia.TRACK, diabetes.TRACK, post_stroke.TRACK]
+ALL_TRACKS = [
+    # Foundational / Getting Started
+    dementia.TRACK,
+    diabetes.TRACK,
+    post_stroke.TRACK,
+    caregiver_roles.TRACK,
+    daily_routine.TRACK,
+    # Practical Skills
+    medication_management.TRACK,
+    warning_signs.TRACK,
+    basic_first_aid.TRACK,
+    mobility_fall_prevention.TRACK,
+    nutrition_meal_planning.TRACK,
+    # Communication & Behavior
+    deescalating_agitation.TRACK,
+    communicating_cognitive_decline.TRACK,
+    talking_to_doctors.TRACK,
+    boundaries_with_family.TRACK,
+    # Emotional & Mental Load
+    recognizing_burnout.TRACK,
+    managing_guilt_grief.TRACK,
+    building_support_network.TRACK,
+    realistic_self_care.TRACK,
+    # Family & Logistics
+    coordinating_family_care.TRACK,
+    legal_financial_basics.TRACK,
+    planning_respite_care.TRACK,
+    end_of_life_planning.TRACK,
+]
 
 
 def seed():
@@ -25,6 +76,7 @@ def seed():
                 slug=track_data["slug"],
                 name=track_data["name"],
                 description=track_data["description"],
+                theme=track_data.get("theme", "foundational"),
             )
             db.add(track)
             db.flush()  # populate track.id

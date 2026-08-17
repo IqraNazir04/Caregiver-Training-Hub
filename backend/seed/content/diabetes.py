@@ -7,6 +7,7 @@ source text before any real-world use.
 
 TRACK = {
     "slug": "diabetes-management",
+    "theme": "foundational",
     "name": "Diabetes Management",
     "description": "Guidance for caregivers helping someone manage diabetes day to day, including blood sugar monitoring and recognizing highs and lows.",
     "lessons": [

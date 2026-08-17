@@ -27,7 +27,7 @@ frontend/   React + Vite SPA
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e .
-cp .env.example .env   # then set OPENAI_API_KEY
+cp .env.example .env   # then set OPENAI_API_KEY (embeddings) and ANTHROPIC_API_KEY (chat, Claude Sonnet 5)
 python -m seed.seed_data   # loads tracks/lessons/quizzes into SQLite and embeds source docs into Chroma
 uvicorn app.main:app --reload
 ```
@@ -51,7 +51,7 @@ cd backend
 pytest
 ```
 
-Backend tests mock all OpenAI calls, so no API key or network access is required to run them.
+Backend tests mock all OpenAI and Anthropic calls, so no API key or network access is required to run them.
 
 ## Safety notes
 

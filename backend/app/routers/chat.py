@@ -1,14 +1,22 @@
+import logging
+
+from anthropic import APIConnectionError as AnthropicAPIConnectionError
+from anthropic import APIError as AnthropicAPIError
 from fastapi import APIRouter, Depends, HTTPException, status
+from openai import OpenAIError
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.database import get_db
 from app.deps import get_current_user
 from app.models import ChatMessage, ChatSession, EscalationLog, Track, User
-from app.rag.openai_client import chat_completion
+from app.rag.ai_clients import chat_completion
 from app.rag.prompts import DISCLAIMER, build_prompt
 from app.rag.retrieval import retrieve
 from app.rag.safety import is_emergency_flagged
 from app.schemas import ChatMessageIn, ChatMessageOut, ChatSessionCreate, ChatSessionOut
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -74,15 +82,31 @@ def post_message(
 ):
     session = _get_session_or_404(session_id, current_user, db)
 
+    if not settings.openai_api_key or not settings.anthropic_api_key:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=(
+                "AI chat isn't configured in this environment yet. Set OPENAI_API_KEY (embeddings) "
+                "and ANTHROPIC_API_KEY (chat) on the backend to enable it."
+            ),
+        )
+
     user_message = ChatMessage(session_id=session.id, role="user", content=payload.content)
     db.add(user_message)
     db.commit()
     db.refresh(user_message)
 
     history = [{"role": m.role, "content": m.content} for m in session.messages[:-1]]
-    retrieved_chunks = retrieve(payload.content, session.track_id)
-    prompt = build_prompt(history, retrieved_chunks, payload.content)
-    answer = chat_completion(prompt)
+    try:
+        retrieved_chunks = retrieve(payload.content, session.track_id)
+        system_prompt, prompt_messages = build_prompt(history, retrieved_chunks, payload.content)
+        answer = chat_completion(system_prompt, prompt_messages)
+    except (OpenAIError, AnthropicAPIError, AnthropicAPIConnectionError):
+        logger.exception("AI provider call failed while handling chat message in session %s", session.id)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="AI chat is having trouble reaching the AI service right now. Please try again shortly.",
+        )
 
     seen_ids = set()
     citations = []

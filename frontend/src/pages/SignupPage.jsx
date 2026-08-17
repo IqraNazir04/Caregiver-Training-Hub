@@ -17,7 +17,7 @@ export default function SignupPage() {
     setSubmitting(true);
     try {
       await signup(email, password, displayName);
-      navigate("/");
+      navigate("/tracks");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -60,6 +60,7 @@ export default function SignupPage() {
       <p>
         Already have an account? <Link to="/login">Log in</Link>
       </p>
+      <p className="auth-hint">You can pick what you're caring for after you sign up, from your profile.</p>
     </div>
   );
 }

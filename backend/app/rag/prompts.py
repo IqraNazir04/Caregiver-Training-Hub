@@ -16,7 +16,7 @@ tell the caregiver to call 911 or seek emergency care immediately, in addition t
 """
 
 
-def build_prompt(history: list[dict], retrieved_chunks: list[dict], query: str) -> list[dict]:
+def build_prompt(history: list[dict], retrieved_chunks: list[dict], query: str) -> tuple[str, list[dict]]:
     if retrieved_chunks:
         context_block = "\n\n".join(
             f"[Source: {chunk['title']}]\n{chunk['snippet']}" for chunk in retrieved_chunks
@@ -24,13 +24,11 @@ def build_prompt(history: list[dict], retrieved_chunks: list[dict], query: str) 
     else:
         context_block = "(no matching source content found)"
 
-    messages: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
-    for turn in history:
-        messages.append({"role": turn["role"], "content": turn["content"]})
+    messages: list[dict] = [{"role": turn["role"], "content": turn["content"]} for turn in history]
     messages.append(
         {
             "role": "user",
             "content": f"Context:\n{context_block}\n\nCaregiver question: {query}",
         }
     )
-    return messages
+    return SYSTEM_PROMPT, messages

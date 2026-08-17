@@ -7,6 +7,7 @@ source text before any real-world use.
 
 TRACK = {
     "slug": "post-stroke-recovery",
+    "theme": "foundational",
     "name": "Post-Stroke Recovery",
     "description": "Support for caregivers helping a family member recover after a stroke, including warning signs, mobility, and daily routines.",
     "lessons": [

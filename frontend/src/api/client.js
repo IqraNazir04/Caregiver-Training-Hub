@@ -43,8 +43,11 @@ export const api = {
       body: { username: email, password },
     }),
   me: (token) => request("/auth/me", { token }),
+  updateSelectedTracks: (token, selectedTracks) =>
+    request("/auth/me", { method: "PATCH", token, body: { selected_tracks: selectedTracks } }),
 
   listTracks: (token) => request("/tracks", { token }),
+  listPublicTracks: () => request("/tracks/public"),
   getTrack: (token, slug) => request(`/tracks/${slug}`, { token }),
   getLesson: (token, slug, lessonId) => request(`/tracks/${slug}/lessons/${lessonId}`, { token }),
   submitQuiz: (token, slug, lessonId, answers) =>

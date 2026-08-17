@@ -3,6 +3,22 @@ import { Link, useParams } from "react-router-dom";
 import { api } from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
 
+function renderLessonBody(markdown) {
+  return markdown
+    .split("\n\n")
+    .map((block) => block.trim())
+    .filter(Boolean)
+    .map((block, i) =>
+      block.startsWith("## ") ? (
+        <h4 key={i} className="lesson-heading">
+          {block.slice(3)}
+        </h4>
+      ) : (
+        <p key={i}>{block}</p>
+      )
+    );
+}
+
 function Lesson({ track, lesson }) {
   const { token } = useAuth();
   const [expanded, setExpanded] = useState(false);
@@ -35,17 +51,25 @@ function Lesson({ track, lesson }) {
   return (
     <div className="lesson-card">
       <button className="lesson-toggle" onClick={() => setExpanded((v) => !v)}>
-        {expanded ? "▾" : "▸"} {lesson.title} ({lesson.estimated_minutes} min)
+        <span>
+          {expanded ? "▾" : "▸"} {lesson.title} ({lesson.estimated_minutes} min)
+        </span>
+        {lesson.completed && (
+          <span className="lesson-complete-badge">
+            ✓ Completed {lesson.quiz_score}/{lesson.quiz_total}
+          </span>
+        )}
       </button>
       {expanded && (
         <div className="lesson-body">
-          <div className="lesson-markdown">
-            {lesson.body_markdown.split("\n").map((line, i) => (
-              <p key={i}>{line}</p>
-            ))}
-          </div>
+          <div className="lesson-markdown">{renderLessonBody(lesson.body_markdown)}</div>
 
           <h3>Quick check</h3>
+          {!result && lesson.completed && (
+            <p className="quiz-previous-score">
+              Your last score: {lesson.quiz_score} / {lesson.quiz_total} — answer again to retake.
+            </p>
+          )}
           {lesson.quiz_questions.map((q, qi) => (
             <div key={q.id} className="quiz-question">
               <p>{q.question_text}</p>
@@ -74,7 +98,7 @@ function Lesson({ track, lesson }) {
               Score: {result.score} / {result.total}
             </p>
           ) : (
-            <button onClick={submitQuiz}>Submit quiz</button>
+            <button onClick={submitQuiz}>{lesson.completed ? "Retake quiz" : "Submit quiz"}</button>
           )}
         </div>
       )}
@@ -99,6 +123,11 @@ export default function TrackDetailPage() {
     <div>
       <h1>{track.name}</h1>
       <p>{track.description}</p>
+      {track.lesson_count > 0 && (
+        <p className="track-detail-progress">
+          {track.completed_count} of {track.lesson_count} lessons complete
+        </p>
+      )}
       <Link to={`/tracks/${track.slug}/chat`} className="chat-cta">
         Chat about {track.name}
       </Link>

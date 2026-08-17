@@ -1,6 +1,6 @@
 from app.models import SourceDocument
 from app.rag.chroma_client import get_collection
-from app.rag.openai_client import embed_texts
+from app.rag.ai_clients import embed_texts
 
 
 def chunk_text(text: str, max_chars: int = 1000) -> list[str]:

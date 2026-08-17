@@ -10,14 +10,20 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8)
     display_name: str
+    selected_tracks: list[str] = []
 
 
 class UserOut(BaseModel):
     id: int
     email: EmailStr
     display_name: str
+    selected_tracks: list[str] = []
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserUpdate(BaseModel):
+    selected_tracks: list[str]
 
 
 class Token(BaseModel):
@@ -32,6 +38,9 @@ class TrackOut(BaseModel):
     slug: str
     name: str
     description: str
+    theme: str
+    lesson_count: int = 0
+    completed_count: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -51,6 +60,10 @@ class LessonOut(BaseModel):
     body_markdown: str
     estimated_minutes: int
     quiz_questions: list[QuizQuestionOut] = []
+    completed: bool = False
+    quiz_score: Optional[int] = None
+    quiz_total: Optional[int] = None
+    completed_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
 

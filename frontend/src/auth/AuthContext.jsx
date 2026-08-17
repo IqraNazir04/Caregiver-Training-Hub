@@ -44,8 +44,16 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateSelectedTracks = async (selectedTracks) => {
+    const updatedUser = await api.updateSelectedTracks(token, selectedTracks);
+    setUser(updatedUser);
+    return updatedUser;
+  };
+
   return (
-    <AuthContext.Provider value={{ token, user, loading, signup, login, logout }}>
+    <AuthContext.Provider
+      value={{ token, user, loading, signup, login, logout, updateSelectedTracks }}
+    >
       {children}
     </AuthContext.Provider>
   );

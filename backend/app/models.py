@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -18,6 +18,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     display_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    selected_tracks: Mapped[list] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)
 
 
@@ -28,6 +29,7 @@ class Track(Base):
     slug: Mapped[str] = mapped_column(String(100), unique=True, index=True, nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
+    theme: Mapped[str] = mapped_column(String(50), nullable=False, default="foundational")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)
 
     lessons: Mapped[list["Lesson"]] = relationship(
@@ -65,6 +67,18 @@ class QuizQuestion(Base):
     explanation: Mapped[str] = mapped_column(Text, nullable=False)
 
     lesson: Mapped["Lesson"] = relationship(back_populates="quiz_questions")
+
+
+class LessonProgress(Base):
+    __tablename__ = "lesson_progress"
+    __table_args__ = (UniqueConstraint("user_id", "lesson_id", name="uq_user_lesson_progress"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    lesson_id: Mapped[int] = mapped_column(ForeignKey("lessons.id"), nullable=False)
+    quiz_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    quiz_total: Mapped[int] = mapped_column(Integer, nullable=False)
+    completed_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, onupdate=_utcnow)
 
 
 class SourceDocument(Base):
