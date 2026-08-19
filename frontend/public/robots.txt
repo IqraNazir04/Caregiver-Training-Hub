@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /tracks
+Disallow: /chat
+Disallow: /checklist
+Disallow: /medications
+Disallow: /certification
+Disallow: /profile
+
+# Replace with your real deployed domain before going live.
+Sitemap: https://YOUR-DOMAIN-HERE/sitemap.xml

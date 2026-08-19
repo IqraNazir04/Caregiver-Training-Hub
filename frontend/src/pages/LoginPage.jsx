@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext.jsx";
+import { useSeo } from "../hooks/useSeo.js";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -9,6 +10,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useSeo({
+    title: "Log in",
+    description: "Log in to your Caregiver Training Hub account to continue your courses, chat, and medication tracking.",
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
+import { useSeo } from "../hooks/useSeo.js";
 
 function renderLessonBody(markdown) {
   return markdown
@@ -115,6 +116,8 @@ export default function TrackDetailPage() {
   useEffect(() => {
     api.getTrack(token, slug).then(setTrack).catch((err) => setError(err.message));
   }, [token, slug]);
+
+  useSeo({ title: track?.name || "Track", noindex: true });
 
   if (error) return <p className="error-text">{error}</p>;
   if (!track) return <p>Loading...</p>;

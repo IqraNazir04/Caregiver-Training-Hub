@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { SideDecorLeft, SideDecorRight } from "../components/SideDecor.jsx";
+import { useSeo } from "../hooks/useSeo.js";
 import {
   BookIcon,
   CalendarIcon,
@@ -33,14 +34,14 @@ const FEATURES = [
     color: "orange",
     title: "Daily care checklist generator",
     body: "Enter a patient's conditions and medications to get a personalized daily routine — medication timing, vitals to watch, and condition-specific red-flag symptoms.",
-    available: false,
+    available: true,
   },
   {
     icon: PillIcon,
     color: "grey",
     title: "Medication interaction & schedule assistant",
-    body: "Photo-scan prescription bottles to build a medication schedule, flag dangerous interactions or duplicate therapies, and get reminders.",
-    available: false,
+    body: "Add medications manually or by scanning a label photo, and get a general interaction/duplicate-therapy check — always reviewed against a pharmacist before you act on it.",
+    available: true,
   },
   {
     icon: ShieldIcon,
@@ -80,6 +81,12 @@ const FEATURES = [
 ];
 
 export default function FeaturesPage() {
+  useSeo({
+    title: "Features",
+    description:
+      "See what's live today on Caregiver Training Hub — condition-specific learning tracks, grounded AI chat, a daily care checklist generator, and a medication interaction assistant — plus what's on the roadmap.",
+  });
+
   return (
     <div className="static-page">
       <SideDecorLeft />
@@ -87,8 +94,8 @@ export default function FeaturesPage() {
       <section className="static-hero">
         <h1>Features</h1>
         <p className="static-lede">
-          Two pieces are live today — learning tracks and grounded AI chat. Everything else below
-          is on the roadmap.
+          Four pieces are live today — learning tracks, grounded AI chat, the daily care checklist
+          generator, and the medication assistant. Everything else below is on the roadmap.
         </p>
       </section>
 

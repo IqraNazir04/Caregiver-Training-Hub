@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
+import { CourseSideDecorLeft, CourseSideDecorRight } from "../components/CourseSideDecor.jsx";
+import { useSeo } from "../hooks/useSeo.js";
 import { THEMES } from "../themes.js";
 
 function CourseCard({ track, loggedIn }) {
@@ -27,11 +29,35 @@ export default function CoursesPage() {
     api.listPublicTracks().then(setTracks).catch((err) => setError(err.message));
   }, []);
 
+  useSeo({
+    title: "Courses",
+    description:
+      "Browse 22 short caregiving courses across dementia care, diabetes management, medication safety, communication, burnout support, and family logistics — free to start.",
+    jsonLd: tracks
+      ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          itemListElement: tracks.map((t, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            item: {
+              "@type": "Course",
+              name: t.name,
+              description: t.description,
+              provider: { "@type": "Organization", name: "Caregiver Training Hub" },
+            },
+          })),
+        }
+      : undefined,
+  });
+
   if (error) return <p className="error-text">{error}</p>;
   if (!tracks) return <p>Loading courses...</p>;
 
   return (
     <div className="static-page">
+      <CourseSideDecorLeft />
+      <CourseSideDecorRight />
       <section className="static-hero">
         <h1>Courses</h1>
         <p className="static-lede">

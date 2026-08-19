@@ -122,3 +122,46 @@ class ChatMessageOut(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# --- Checklist ---
+
+class ChecklistIn(BaseModel):
+    track_slugs: list[str] = Field(min_length=1)
+    medications: list[str] = []
+
+
+class ChecklistOut(BaseModel):
+    content: str
+    citations: list[Citation]
+    disclaimer: str
+
+
+# --- Medications ---
+
+class MedicationCreate(BaseModel):
+    name: str = Field(min_length=1)
+    dosage: str = ""
+    schedule_note: str = ""
+
+
+class MedicationOut(BaseModel):
+    id: int
+    name: str
+    dosage: str
+    schedule_note: str
+    source: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MedicationScanOut(BaseModel):
+    name: str
+    dosage: str
+    schedule_note: str
+
+
+class InteractionCheckOut(BaseModel):
+    content: str
+    disclaimer: str

@@ -2,12 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import AboutScene from "../components/AboutScene.jsx";
 import { BookIcon, ChatIcon, ShieldIcon } from "../components/icons.jsx";
+import { useSeo } from "../hooks/useSeo.js";
 
 const STEPS = [
   {
     icon: BookIcon,
     title: "Pick a track",
-    body: "Choose the condition you're caring for — Dementia & Alzheimer's, post-stroke recovery, or diabetes management — and work through short lessons and quizzes at your own pace.",
+    body: "Choose from 22 short courses — Dementia & Alzheimer's, diabetes, post-stroke recovery, medication safety, communication, burnout, and more — and work through lessons and quizzes at your own pace.",
   },
   {
     icon: ChatIcon,
@@ -22,6 +23,12 @@ const STEPS = [
 ];
 
 export default function AboutPage() {
+  useSeo({
+    title: "About",
+    description:
+      "Why Caregiver Training Hub exists: trustworthy, bite-sized caregiving education plus an AI chat you can ask anything, for family caregivers and home health aides with no formal training.",
+  });
+
   return (
     <div className="static-page">
       <section className="static-hero">

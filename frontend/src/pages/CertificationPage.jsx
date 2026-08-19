@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
+import { CertificationGraphic } from "../components/PageGraphics.jsx";
+import { useSeo } from "../hooks/useSeo.js";
 
 function isComplete(track) {
   return track.lesson_count > 0 && track.completed_count === track.lesson_count;
@@ -16,6 +18,8 @@ export default function CertificationPage() {
     api.listTracks(token).then(setTracks).catch((err) => setError(err.message));
   }, [token]);
 
+  useSeo({ title: "Certification", noindex: true });
+
   if (error) return <p className="error-text">{error}</p>;
   if (!tracks) return <p>Loading certification status...</p>;
 
@@ -24,11 +28,16 @@ export default function CertificationPage() {
 
   return (
     <div>
-      <h1>Certification</h1>
-      <p>
-        Finish every lesson in a course to earn a certificate of completion, based on your actual quiz
-        activity — free anytime you complete a course.
-      </p>
+      <div className="page-header">
+        <CertificationGraphic className="page-header-graphic" aria-hidden="true" />
+        <div className="page-header-text">
+          <h1>Certification</h1>
+          <p>
+            Finish every lesson in a course to earn a certificate of completion, based on your actual quiz
+            activity — free anytime you complete a course.
+          </p>
+        </div>
+      </div>
 
       <section className="theme-section">
         <div className="theme-header">

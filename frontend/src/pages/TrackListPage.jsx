@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
+import { useSeo } from "../hooks/useSeo.js";
 import { THEMES } from "../themes.js";
 
 function TrackCard({ track, recommended }) {
@@ -34,6 +35,8 @@ export default function TrackListPage() {
   useEffect(() => {
     api.listTracks(token).then(setTracks).catch((err) => setError(err.message));
   }, [token]);
+
+  useSeo({ title: "Your Tracks", noindex: true });
 
   const themeByKey = useMemo(() => Object.fromEntries(THEMES.map((t) => [t.key, t])), []);
 

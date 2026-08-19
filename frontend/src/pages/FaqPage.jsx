@@ -1,4 +1,5 @@
 import React from "react";
+import { useSeo } from "../hooks/useSeo.js";
 
 const FAQS = [
   {
@@ -15,7 +16,7 @@ const FAQS = [
   },
   {
     q: "Which conditions are covered right now?",
-    a: "Three tracks are live today: Dementia & Alzheimer's care, post-stroke recovery, and diabetes management. More condition-specific tracks are planned.",
+    a: "22 courses are live today across five themes — foundational topics like dementia, diabetes, and post-stroke care; practical skills like first aid and medication management; communication and behavior; emotional and mental load; and family and logistics. Browse them all on the Courses page.",
   },
   {
     q: "Is my account information private?",
@@ -23,11 +24,25 @@ const FAQS = [
   },
   {
     q: "What's coming next?",
-    a: "A daily care checklist generator, a medication interaction assistant, full symptom triage, voice-first mode, burnout check-ins, a family coordination board, and an appointment-prep tool — see the Features page for details on each.",
+    a: "Full symptom triage with escalation tiers, voice-first mode, burnout and respite check-ins, a family care coordination board, and an appointment-prep tool — see the Features page for details on each.",
   },
 ];
 
 export default function FaqPage() {
+  useSeo({
+    title: "FAQ",
+    description: "Answers to common questions about Caregiver Training Hub — what it is, how the AI chat and safety flagging work, what's covered, and what's coming next.",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
+    },
+  });
+
   return (
     <div className="static-page">
       <section className="static-hero">

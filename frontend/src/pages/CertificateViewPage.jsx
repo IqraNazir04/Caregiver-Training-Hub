@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
+import { useSeo } from "../hooks/useSeo.js";
 
 export default function CertificateViewPage() {
   const { slug } = useParams();
@@ -12,6 +13,8 @@ export default function CertificateViewPage() {
   useEffect(() => {
     api.getTrack(token, slug).then(setTrack).catch((err) => setError(err.message));
   }, [token, slug]);
+
+  useSeo({ title: track ? `${track.name} Certificate` : "Certificate", noindex: true });
 
   if (error) return <p className="error-text">{error}</p>;
   if (!track || !user) return <p>Loading certificate...</p>;

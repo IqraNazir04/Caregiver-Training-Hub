@@ -1,11 +1,13 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-async function request(path, { method = "GET", body, token, form } = {}) {
+async function request(path, { method = "GET", body, token, form, formData } = {}) {
   const headers = {};
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
   let payload = body;
-  if (form) {
+  if (formData) {
+    payload = formData; // let the browser set the multipart Content-Type + boundary
+  } else if (form) {
     payload = new URLSearchParams(body);
     headers["Content-Type"] = "application/x-www-form-urlencoded";
   } else if (body !== undefined) {
@@ -66,4 +68,23 @@ export const api = {
       token,
       body: { content },
     }),
+
+  generateChecklist: (token, trackSlugs, medications) =>
+    request("/checklist/generate", {
+      method: "POST",
+      token,
+      body: { track_slugs: trackSlugs, medications },
+    }),
+
+  listMedications: (token) => request("/medications", { token }),
+  addMedication: (token, medication) =>
+    request("/medications", { method: "POST", token, body: medication }),
+  deleteMedication: (token, id) => request(`/medications/${id}`, { method: "DELETE", token }),
+  scanMedicationPhoto: (token, file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return request("/medications/scan", { method: "POST", token, formData });
+  },
+  checkMedicationInteractions: (token) =>
+    request("/medications/check-interactions", { method: "POST", token }),
 };

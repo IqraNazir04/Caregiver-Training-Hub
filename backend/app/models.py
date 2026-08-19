@@ -121,6 +121,18 @@ class ChatMessage(Base):
     session: Mapped["ChatSession"] = relationship(back_populates="messages")
 
 
+class Medication(Base):
+    __tablename__ = "medications"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    dosage: Mapped[str] = mapped_column(String(255), default="")
+    schedule_note: Mapped[str] = mapped_column(String(500), default="")
+    source: Mapped[str] = mapped_column(String(20), default="manual")  # "manual" | "photo"
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)
+
+
 class EscalationLog(Base):
     __tablename__ = "escalation_logs"
 

@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { api } from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
 import { THEMES } from "../themes.js";
+import { ProfileGraphic } from "../components/PageGraphics.jsx";
+import { useSeo } from "../hooks/useSeo.js";
 
 export default function ProfilePage() {
   const { token, user, logout, updateSelectedTracks } = useAuth();
@@ -11,6 +13,8 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+
+  useSeo({ title: "Your Profile", noindex: true });
 
   useEffect(() => {
     api
@@ -49,7 +53,12 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <h1>Your profile</h1>
+      <div className="page-header">
+        <ProfileGraphic className="page-header-graphic" aria-hidden="true" />
+        <div className="page-header-text">
+          <h1>Your profile</h1>
+        </div>
+      </div>
       <div className="profile-card">
         <div className="profile-avatar">{user.display_name.charAt(0).toUpperCase()}</div>
         <div>

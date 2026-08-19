@@ -5,11 +5,13 @@ import AboutPage from "./pages/AboutPage.jsx";
 import CertificateViewPage from "./pages/CertificateViewPage.jsx";
 import CertificationPage from "./pages/CertificationPage.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
+import ChecklistPage from "./pages/ChecklistPage.jsx";
 import CoursesPage from "./pages/CoursesPage.jsx";
 import FaqPage from "./pages/FaqPage.jsx";
 import FeaturesPage from "./pages/FeaturesPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import MedicationsPage from "./pages/MedicationsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import TrackDetailPage from "./pages/TrackDetailPage.jsx";
@@ -25,6 +27,8 @@ const PUBLIC_TABS = [
 
 const APP_TABS = [
   { to: "/tracks", label: "Tracks" },
+  { to: "/checklist", label: "Checklist" },
+  { to: "/medications", label: "Medications" },
   { to: "/certification", label: "Certification" },
   { to: "/chat", label: "Chat" },
   { to: "/profile", label: "Profile" },
@@ -155,6 +159,22 @@ export default function App() {
             element={
               <RequireAuth>
                 <ChatPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/checklist"
+            element={
+              <RequireAuth>
+                <ChecklistPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/medications"
+            element={
+              <RequireAuth>
+                <MedicationsPage />
               </RequireAuth>
             }
           />
