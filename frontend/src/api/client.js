@@ -1,5 +1,20 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
+// FastAPI validation errors (422) come back as an array of {msg, loc, type} objects
+// rather than a plain string — turn those (or any other non-string shape) into
+// readable text instead of leaking raw JSON to the user.
+function formatErrorDetail(detail) {
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(detail)) {
+    const messages = detail
+      .map((item) => (item && typeof item === "object" ? item.msg : String(item)))
+      .filter(Boolean)
+      .map((msg) => msg.replace(/^Value error,\s*/i, ""));
+    if (messages.length) return messages.join(" ");
+  }
+  return "Something went wrong. Please check your input and try again.";
+}
+
 async function request(path, { method = "GET", body, token, form, formData } = {}) {
   const headers = {};
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -21,11 +36,11 @@ async function request(path, { method = "GET", body, token, form, formData } = {
     let detail = response.statusText;
     try {
       const errorBody = await response.json();
-      detail = errorBody.detail || detail;
+      detail = errorBody.detail ?? detail;
     } catch {
       // ignore JSON parse failure, fall back to statusText
     }
-    throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
+    throw new Error(formatErrorDetail(detail));
   }
 
   if (response.status === 204) return null;
@@ -44,6 +59,9 @@ export const api = {
       form: true,
       body: { username: email, password },
     }),
+  forgotPassword: (email) => request("/auth/forgot-password", { method: "POST", body: { email } }),
+  resetPassword: (token, newPassword) =>
+    request("/auth/reset-password", { method: "POST", body: { token, new_password: newPassword } }),
   me: (token) => request("/auth/me", { token }),
   updateSelectedTracks: (token, selectedTracks) =>
     request("/auth/me", { method: "PATCH", token, body: { selected_tracks: selectedTracks } }),

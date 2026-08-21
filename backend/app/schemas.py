@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 # --- Auth ---
@@ -29,6 +29,19 @@ class UserUpdate(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class ForgotPasswordIn(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordIn(BaseModel):
+    token: str = Field(min_length=1)
+    new_password: str = Field(min_length=8)
+
+
+class MessageOut(BaseModel):
+    message: str
 
 
 # --- Tracks / Lessons / Quiz ---
@@ -105,6 +118,14 @@ class ChatSessionOut(BaseModel):
 class ChatMessageIn(BaseModel):
     content: str = Field(min_length=1)
 
+    @field_validator("content")
+    @classmethod
+    def content_must_not_be_blank(cls, v):
+        v = v.strip()
+        if not v:
+            raise ValueError("Message cannot be blank")
+        return v
+
 
 class Citation(BaseModel):
     source_document_id: int
@@ -143,6 +164,19 @@ class MedicationCreate(BaseModel):
     name: str = Field(min_length=1)
     dosage: str = ""
     schedule_note: str = ""
+
+    @field_validator("name")
+    @classmethod
+    def name_must_not_be_blank(cls, v):
+        v = v.strip()
+        if not v:
+            raise ValueError("Medication name cannot be blank")
+        return v
+
+    @field_validator("dosage", "schedule_note")
+    @classmethod
+    def strip_optional_fields(cls, v):
+        return v.strip()
 
 
 class MedicationOut(BaseModel):

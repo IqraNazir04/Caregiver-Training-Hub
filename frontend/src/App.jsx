@@ -9,10 +9,12 @@ import ChecklistPage from "./pages/ChecklistPage.jsx";
 import CoursesPage from "./pages/CoursesPage.jsx";
 import FaqPage from "./pages/FaqPage.jsx";
 import FeaturesPage from "./pages/FeaturesPage.jsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import MedicationsPage from "./pages/MedicationsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import TrackDetailPage from "./pages/TrackDetailPage.jsx";
 import TrackListPage from "./pages/TrackListPage.jsx";
@@ -114,6 +116,8 @@ export default function App() {
           <Route path="/courses" element={<CoursesPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route
             path="/certification"
             element={

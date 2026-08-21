@@ -17,7 +17,7 @@ Bite-sized microlearning + AI chat support for home health aides and family care
 - **Certification**: once every lesson in a track is completed, a real printable certificate is available (`/certification`, `/certification/:slug`) with the caregiver's name, the course, and the actual completion date.
 - **Public course browsing**: a `/courses` page lists every track for unauthenticated visitors (via `GET /tracks/public`), linking to sign-up.
 - **Profile-based topic picker**: caregivers pick "what are you caring for" on their profile; the Tracks page surfaces a "Recommended for you" section based on that, plus keyword search across all tracks.
-- **Auth**: email/password signup and login with JWT sessions.
+- **Auth**: email/password signup and login with JWT sessions. Email is normalized (trimmed + lowercased) at signup and login, so `User@Example.com` and `user@example.com` are treated as the same account. A "Forgot password?" flow sends a real, time-limited reset link by email (via Resend) — the link is single-use and expires after 30 minutes, and the request endpoint always returns the same generic response whether or not the email is registered, so it can't be used to enumerate accounts.
 - **Public marketing pages**: Home, About, Features, Courses, FAQ — plus an authenticated app shell (Tracks, Checklist, Medications, Certification, Chat, Profile), all with hand-drawn SVG illustrations (no external image assets).
 - **SEO**: per-page title/description/canonical/Open Graph tags, `noindex` on authenticated pages, `FAQPage` and `Course` JSON-LD structured data, `robots.txt`, `sitemap.xml`, and a generated OG share image.
 
@@ -44,6 +44,7 @@ Also on the radar, not yet scoped in detail: a real 3-tier emergency triage clas
 
 - **Backend**: FastAPI + SQLAlchemy (SQLite) + Pydantic, JWT auth (`python-jose`, `passlib`/bcrypt)
 - **RAG**: Chroma (vector store) + OpenAI `text-embedding-3-small` for embeddings, **Claude Sonnet 5** (Anthropic Messages API) for chat/checklist/interaction-check generation and for medication-label vision extraction — split across two providers since Anthropic has no embeddings API
+- **Email**: Resend for transactional email (password reset links)
 - **Frontend**: React + Vite, React Router, Context-based auth state, plain CSS (no component library), hand-drawn inline SVG illustrations (no external image assets)
 - **SEO**: a `useSeo` hook (per-page title/description/canonical/OG + JSON-LD injection), static `robots.txt`/`sitemap.xml`/OG image in `frontend/public/`
 - **Tests**: pytest + FastAPI `TestClient`, with all OpenAI/Anthropic calls mocked
@@ -55,6 +56,7 @@ backend/
   app/
     routers/        auth, tracks, chat, checklist, medications
     rag/             ai_clients (OpenAI embeddings + Claude chat/vision), retrieval, prompts, ingest, safety
+    email_client.py  Resend wrapper (password reset emails)
     models.py, schemas.py, security.py, deps.py, config.py, database.py
   seed/
     content/         one file per track (22 total)
@@ -65,8 +67,9 @@ frontend/
   public/            favicon.svg, og-image.png, robots.txt, sitemap.xml
   src/
     pages/           Landing, About, Features, Courses, Faq, Login, Signup,
-                      TrackList, TrackDetail, Chat, Checklist, Medications,
-                      Profile, Certification, CertificateView
+                      ForgotPassword, ResetPassword, TrackList, TrackDetail,
+                      Chat, Checklist, Medications, Profile, Certification,
+                      CertificateView
     components/       CaregivingScene, AboutScene, CourseSideDecor, SideDecor,
                        PageGraphics (hand-drawn SVG), icons
     hooks/useSeo.js   per-page title/meta/canonical/OG/JSON-LD
@@ -79,7 +82,7 @@ frontend/
 
 | Area | Routes |
 |---|---|
-| Auth | `POST /auth/signup`, `POST /auth/login`, `GET /auth/me`, `PATCH /auth/me` (update selected tracks) |
+| Auth | `POST /auth/signup`, `POST /auth/login`, `POST /auth/forgot-password` (always returns a generic message), `POST /auth/reset-password` (token + new password), `GET /auth/me`, `PATCH /auth/me` (update selected tracks) |
 | Tracks | `GET /tracks` (authenticated, with progress), `GET /tracks/public` (unauthenticated preview), `GET /tracks/{slug}`, `GET /tracks/{slug}/lessons/{lesson_id}`, `POST /tracks/{slug}/lessons/{lesson_id}/quiz/submit` |
 | Chat | `POST /chat/sessions`, `GET /chat/sessions/{id}/messages`, `POST /chat/sessions/{id}/messages` |
 | Checklist | `POST /checklist/generate` (track slugs + medications → grounded markdown checklist with citations) |
@@ -89,7 +92,7 @@ Full interactive docs at `/docs` once the backend is running.
 
 ## Data model
 
-`User` (with `selected_tracks`), `Track` (themed), `Lesson`, `QuizQuestion`, `SourceDocument` (chunked/embedded into Chroma), `LessonProgress` (per-user quiz score + `completed_at`, used for both progress bars and certificate eligibility/date), `Medication` (per-user name/dosage/schedule note, `source`: manual or photo), `ChatSession`, `ChatMessage` (citations + flagged state), `EscalationLog`.
+`User` (with `selected_tracks`), `Track` (themed), `Lesson`, `QuizQuestion`, `SourceDocument` (chunked/embedded into Chroma), `LessonProgress` (per-user quiz score + `completed_at`, used for both progress bars and certificate eligibility/date), `Medication` (per-user name/dosage/schedule note, `source`: manual or photo), `PasswordResetToken` (hashed token, `expires_at`, `used_at` for single-use enforcement), `ChatSession`, `ChatMessage` (citations + flagged state), `EscalationLog`.
 
 ## Running locally
 
@@ -99,14 +102,14 @@ Full interactive docs at `/docs` once the backend is running.
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e .
-cp .env.example .env   # then set OPENAI_API_KEY (embeddings) and ANTHROPIC_API_KEY (chat, Claude Sonnet 5)
+cp .env.example .env   # then set OPENAI_API_KEY, ANTHROPIC_API_KEY, and RESEND_API_KEY (see below)
 python -m seed.seed_data   # loads all 22 tracks/lessons/quizzes into SQLite and embeds source docs into Chroma
 uvicorn app.main:app --reload
 ```
 
 API docs at http://localhost:8000/docs.
 
-Required env vars (`backend/.env`): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `JWT_SECRET`, `JWT_EXPIRE_MINUTES` (default 1440), `DATABASE_URL` (default `sqlite:///./caregiver.db`), `CHROMA_PERSIST_DIR` (default `./chroma_data`).
+Required env vars (`backend/.env`): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `RESEND_API_KEY` (password reset emails), `EMAIL_FROM` (default `Caregiver Training Hub <onboarding@resend.dev>`), `FRONTEND_URL` (default `http://localhost:5173`, used to build the reset link), `JWT_SECRET`, `JWT_EXPIRE_MINUTES` (default 1440), `DATABASE_URL` (default `sqlite:///./caregiver.db`), `CHROMA_PERSIST_DIR` (default `./chroma_data`).
 
 ### Frontend
 
@@ -132,6 +135,14 @@ Backend tests mock all OpenAI and Anthropic calls, so no API key or network acce
 Every page sets its own title/description/canonical/Open Graph tags via `useSeo` (`frontend/src/hooks/useSeo.js`); authenticated and personalized pages (Tracks, track detail, Chat, Checklist, Medications, Certification, certificate view, Profile) are marked `noindex, nofollow` since they're private. `/faq` emits `FAQPage` JSON-LD and `/courses` emits a `Course` `ItemList`; `index.html` carries site-wide `Organization`/`WebSite` JSON-LD. Static `robots.txt`, `sitemap.xml`, and `og-image.png` live in `frontend/public/`.
 
 **Before deploying**: `robots.txt`, `sitemap.xml`, and the JSON-LD `url` fields in `index.html` all use a `YOUR-DOMAIN-HERE` placeholder — replace with your real domain. `og:image`/`twitter:image` are currently relative paths; switch to an absolute URL once deployed for reliable link-preview rendering.
+
+## Auth & password reset
+
+- Emails are normalized (`.strip().lower()`) at signup and login, so sign-up and login are case-insensitive and can't produce duplicate accounts that differ only by casing.
+- **Forgot password**: `POST /auth/forgot-password` looks up the account, and — only if it exists — generates a random 32-byte token (`secrets.token_urlsafe`), stores its SHA-256 hash (never the raw token) with a 30-minute expiry, and emails a reset link (`{FRONTEND_URL}/reset-password?token=...`) via Resend. The endpoint always returns the same generic message regardless of whether the email is registered, so it can't be used to enumerate accounts. Any send failure is logged server-side rather than surfaced to the caller, for the same reason.
+- **Reset password**: `POST /auth/reset-password` hashes the submitted token and looks it up; a missing, already-used, or expired token is rejected with a 400. On success the token is marked used (`used_at`) so it can't be replayed, and the password is rehashed with bcrypt.
+- **Resend sandbox limitation**: without a verified sending domain, Resend only allows delivery to the email address of the Resend account owner — emails to other recipients will fail (logged, not surfaced to the user, per the anti-enumeration behavior above). Verify a domain at resend.com/domains and update `EMAIL_FROM` to use it before this works for real end users.
+- Existing JWT sessions are **not** revoked on password reset (there's no server-side session store to revoke against — JWTs are stateless and simply expire on their own after `JWT_EXPIRE_MINUTES`). There's also no rate limiting on any auth endpoint yet.
 
 ## Safety notes
 

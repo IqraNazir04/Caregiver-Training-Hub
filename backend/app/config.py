@@ -14,5 +14,10 @@ class Settings(BaseSettings):
     chat_model: str = "claude-sonnet-5"
     embedding_model: str = "text-embedding-3-small"
 
+    resend_api_key: str = ""
+    email_from: str = "Caregiver Training Hub <onboarding@resend.dev>"
+    frontend_url: str = "http://localhost:5173"
+    password_reset_expire_minutes: int = 30
+
 
 settings = Settings()

@@ -15,6 +15,7 @@ dependencies = [
     "openai>=1.30",
     "anthropic>=0.40",
     "chromadb>=0.5",
+    "resend>=2.0",
 ]
 
 [project.optional-dependencies]
