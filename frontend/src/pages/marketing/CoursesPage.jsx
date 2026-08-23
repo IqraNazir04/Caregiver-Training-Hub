@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
-import { CourseSideDecorLeft, CourseSideDecorRight } from "../components/CourseSideDecor.jsx";
-import { useSeo } from "../hooks/useSeo.js";
-import { THEMES } from "../themes.js";
+import { api } from "../../api/client.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
+import { CourseSideDecorLeft, CourseSideDecorRight } from "../../components/CourseSideDecor.jsx";
+import { useSeo } from "../../hooks/useSeo.js";
+import { THEMES } from "../../themes.js";
 
 function CourseCard({ track, loggedIn }) {
   return (

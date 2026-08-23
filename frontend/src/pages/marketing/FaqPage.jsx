@@ -1,5 +1,5 @@
 import React from "react";
-import { useSeo } from "../hooks/useSeo.js";
+import { useSeo } from "../../hooks/useSeo.js";
 
 const FAQS = [
   {

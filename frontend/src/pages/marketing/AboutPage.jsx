@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import AboutScene from "../components/AboutScene.jsx";
-import { BookIcon, ChatIcon, ShieldIcon } from "../components/icons.jsx";
-import { useSeo } from "../hooks/useSeo.js";
+import AboutScene from "../../components/AboutScene.jsx";
+import { BookIcon, ChatIcon, ShieldIcon } from "../../components/icons.jsx";
+import { useSeo } from "../../hooks/useSeo.js";
 
 const STEPS = [
   {

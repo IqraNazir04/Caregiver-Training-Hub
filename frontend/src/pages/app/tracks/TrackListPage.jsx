@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
-import { useSeo } from "../hooks/useSeo.js";
-import { THEMES } from "../themes.js";
+import { api } from "../../../api/client.js";
+import { useAuth } from "../../../auth/AuthContext.jsx";
+import { useSeo } from "../../../hooks/useSeo.js";
+import { THEMES } from "../../../themes.js";
 
 function TrackCard({ track, recommended }) {
   const pct = track.lesson_count > 0 ? Math.round((track.completed_count / track.lesson_count) * 100) : 0;

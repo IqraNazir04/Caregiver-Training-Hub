@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, Navigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext.jsx";
-import CaregivingScene from "../components/CaregivingScene.jsx";
-import { BookIcon, ChatIcon, ShieldIcon } from "../components/icons.jsx";
-import { useSeo } from "../hooks/useSeo.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
+import CaregivingScene from "../../components/CaregivingScene.jsx";
+import { BookIcon, ChatIcon, ShieldIcon } from "../../components/icons.jsx";
+import { useSeo } from "../../hooks/useSeo.js";
 
 export default function LandingPage() {
   const { token, loading } = useAuth();

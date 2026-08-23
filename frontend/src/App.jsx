@@ -1,23 +1,24 @@
-import React from "react";
-import { Navigate, NavLink, Route, Routes } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Navigate, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import { useAuth } from "./auth/AuthContext.jsx";
-import AboutPage from "./pages/AboutPage.jsx";
-import CertificateViewPage from "./pages/CertificateViewPage.jsx";
-import CertificationPage from "./pages/CertificationPage.jsx";
-import ChatPage from "./pages/ChatPage.jsx";
-import ChecklistPage from "./pages/ChecklistPage.jsx";
-import CoursesPage from "./pages/CoursesPage.jsx";
-import FaqPage from "./pages/FaqPage.jsx";
-import FeaturesPage from "./pages/FeaturesPage.jsx";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
-import LandingPage from "./pages/LandingPage.jsx";
-import LoginPage from "./pages/LoginPage.jsx";
-import MedicationsPage from "./pages/MedicationsPage.jsx";
-import ProfilePage from "./pages/ProfilePage.jsx";
-import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
-import SignupPage from "./pages/SignupPage.jsx";
-import TrackDetailPage from "./pages/TrackDetailPage.jsx";
-import TrackListPage from "./pages/TrackListPage.jsx";
+import Logo from "./components/Logo.jsx";
+import AboutPage from "./pages/marketing/AboutPage.jsx";
+import FeaturesPage from "./pages/marketing/FeaturesPage.jsx";
+import CoursesPage from "./pages/marketing/CoursesPage.jsx";
+import FaqPage from "./pages/marketing/FaqPage.jsx";
+import LandingPage from "./pages/marketing/LandingPage.jsx";
+import LoginPage from "./pages/auth/LoginPage.jsx";
+import SignupPage from "./pages/auth/SignupPage.jsx";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.jsx";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage.jsx";
+import TrackListPage from "./pages/app/tracks/TrackListPage.jsx";
+import TrackDetailPage from "./pages/app/tracks/TrackDetailPage.jsx";
+import CertificationPage from "./pages/app/certification/CertificationPage.jsx";
+import CertificateViewPage from "./pages/app/certification/CertificateViewPage.jsx";
+import ChatPage from "./pages/app/ChatPage.jsx";
+import ChecklistPage from "./pages/app/ChecklistPage.jsx";
+import MedicationsPage from "./pages/app/MedicationsPage.jsx";
+import ProfilePage from "./pages/app/ProfilePage.jsx";
 
 const PUBLIC_TABS = [
   { to: "/", label: "Home", end: true },
@@ -62,33 +63,60 @@ function NavTabs({ tabs }) {
 
 function TopNav() {
   const { token, user, logout } = useAuth();
+  const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Predictable navigation: the logo always stays top-left and pinned; on
+  // narrow screens the nav collapses behind a toggle instead of wrapping
+  // across multiple rows, and closes automatically on every navigation.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
   return (
     <header className="top-nav">
-      <NavLink to={token ? "/tracks" : "/"} className="brand">
-        Caregiver Training Hub
-      </NavLink>
+      <div className="top-nav-bar">
+        <NavLink to={token ? "/tracks" : "/"} className="brand">
+          <Logo className="brand-logo" aria-hidden="true" />
+          Caregiver Training Hub
+        </NavLink>
 
-      <NavTabs tabs={token ? APP_TABS : PUBLIC_TABS} />
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <span className="nav-toggle-bar" />
+          <span className="nav-toggle-bar" />
+          <span className="nav-toggle-bar" />
+        </button>
+      </div>
 
-      <div className="top-nav-right">
-        {user ? (
-          <>
-            <span className="user-badge">
-              <span className="user-avatar">{user.display_name.charAt(0).toUpperCase()}</span>
-              {user.display_name}
-            </span>
-            <button onClick={logout}>Log out</button>
-          </>
-        ) : (
-          <>
-            <NavLink to="/login" className="nav-login-link">
-              Log in
-            </NavLink>
-            <NavLink to="/signup" className="nav-signup-btn">
-              Sign up
-            </NavLink>
-          </>
-        )}
+      <div className={`top-nav-collapse${menuOpen ? " top-nav-collapse-open" : ""}`}>
+        <NavTabs tabs={token ? APP_TABS : PUBLIC_TABS} />
+
+        <div className="top-nav-right">
+          {user ? (
+            <>
+              <span className="user-badge">
+                <span className="user-avatar">{user.display_name.charAt(0).toUpperCase()}</span>
+                {user.display_name}
+              </span>
+              <button onClick={logout}>Log out</button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" className="nav-login-link">
+                Log in
+              </NavLink>
+              <NavLink to="/signup" className="nav-signup-btn">
+                Sign up
+              </NavLink>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

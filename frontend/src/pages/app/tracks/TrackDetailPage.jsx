@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { api } from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
-import { useSeo } from "../hooks/useSeo.js";
+import { api } from "../../../api/client.js";
+import { useAuth } from "../../../auth/AuthContext.jsx";
+import { useSeo } from "../../../hooks/useSeo.js";
 
 function renderLessonBody(markdown) {
   return markdown

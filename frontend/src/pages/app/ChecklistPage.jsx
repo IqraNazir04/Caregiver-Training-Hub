@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { api } from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
-import { renderMarkdown } from "../markdown.jsx";
-import { THEMES } from "../themes.js";
-import { ChecklistGraphic } from "../components/PageGraphics.jsx";
-import { useSeo } from "../hooks/useSeo.js";
+import { api } from "../../api/client.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
+import { renderMarkdown } from "../../markdown.jsx";
+import { THEMES } from "../../themes.js";
+import { ChecklistGraphic } from "../../components/PageGraphics.jsx";
+import { useSeo } from "../../hooks/useSeo.js";
 
 export default function ChecklistPage() {
   const { token, user } = useAuth();

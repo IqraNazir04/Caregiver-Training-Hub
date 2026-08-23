@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { SideDecorLeft, SideDecorRight } from "../components/SideDecor.jsx";
-import { useSeo } from "../hooks/useSeo.js";
+import { SideDecorLeft, SideDecorRight } from "../../components/SideDecor.jsx";
+import { useSeo } from "../../hooks/useSeo.js";
 import {
   BookIcon,
   CalendarIcon,
@@ -12,7 +12,7 @@ import {
   PillIcon,
   ShieldIcon,
   UsersIcon,
-} from "../components/icons.jsx";
+} from "../../components/icons.jsx";
 
 const FEATURES = [
   {

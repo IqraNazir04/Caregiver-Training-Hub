@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
-import { THEMES } from "../themes.js";
-import { ProfileGraphic } from "../components/PageGraphics.jsx";
-import { useSeo } from "../hooks/useSeo.js";
+import { api } from "../../api/client.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
+import { THEMES } from "../../themes.js";
+import { ProfileGraphic } from "../../components/PageGraphics.jsx";
+import { useSeo } from "../../hooks/useSeo.js";
 
 export default function ProfilePage() {
   const { token, user, logout, updateSelectedTracks } = useAuth();

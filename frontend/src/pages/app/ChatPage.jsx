@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api } from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
-import { renderMarkdown } from "../markdown.jsx";
-import { ChatGraphic } from "../components/PageGraphics.jsx";
-import { useSeo } from "../hooks/useSeo.js";
+import { api } from "../../api/client.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
+import { renderMarkdown } from "../../markdown.jsx";
+import { ChatGraphic } from "../../components/PageGraphics.jsx";
+import { useSeo } from "../../hooks/useSeo.js";
 
 export default function ChatPage() {
   const { slug } = useParams();

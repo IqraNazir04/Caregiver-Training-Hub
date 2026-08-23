@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { api } from "../api/client.js";
-import { useSeo } from "../hooks/useSeo.js";
+import { api } from "../../api/client.js";
+import { useSeo } from "../../hooks/useSeo.js";
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();

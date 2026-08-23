@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext.jsx";
-import { useSeo } from "../hooks/useSeo.js";
+import { useAuth } from "../../auth/AuthContext.jsx";
+import { useSeo } from "../../hooks/useSeo.js";
 
 export default function SignupPage() {
   const { signup } = useAuth();

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
-import { CertificationGraphic } from "../components/PageGraphics.jsx";
-import { useSeo } from "../hooks/useSeo.js";
+import { api } from "../../../api/client.js";
+import { useAuth } from "../../../auth/AuthContext.jsx";
+import { CertificationGraphic } from "../../../components/PageGraphics.jsx";
+import { useSeo } from "../../../hooks/useSeo.js";
 
 function isComplete(track) {
   return track.lesson_count > 0 && track.completed_count === track.lesson_count;
